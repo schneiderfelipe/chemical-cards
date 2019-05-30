@@ -1,0 +1,24 @@
+\documentclass[12pt]{article}
+\usepackage{geometry}
+\usepackage{anyfontsize}
+\usepackage[version=4]{mhchem}
+
+\geometry{paperwidth=$WIDTH,paperheight=$HEIGHT,margin=0.25in}
+
+\newlength\tindent
+\setlength{\tindent}{\parindent}
+\setlength{\parindent}{0pt}
+\renewcommand{\indent}{\hspace*{\tindent}}
+
+\begin{document}
+$HEADER
+\vfill
+\begin{center}
+  {\fontsize{50}{60}
+    \ce{^{$ATOMIC_NUMBER}$SYMBOL}
+  }
+
+  $FOOTER
+\end{center}
+\vfill
+\end{document}
