@@ -3,7 +3,7 @@
 \usepackage{anyfontsize}
 \usepackage[version=4]{mhchem}
 
-\geometry{paperwidth=$WIDTH,paperheight=$HEIGHT,margin=0.25in}
+\geometry{paperwidth=2.25in,paperheight=3.5in,margin=0.25in}
 
 \newlength\tindent
 \setlength{\tindent}{\parindent}
@@ -11,16 +11,18 @@
 \renewcommand{\indent}{\hspace*{\tindent}}
 
 \begin{document}
-$HEADER
+\hfill{}\ce{[Rn] 5f^{3} 6d 7s^{2}}
 \vfill
 \begin{center}
   {\fontsize{50}{60}
-    \ce{^{$ATOMIC_NUMBER}$SYMBOL}
+    \ce{^{92}U}
   }
 
   \vspace{1em}
 
-  $FOOTER
+  238.02891
+
+Uranium
 \end{center}
 \vfill
 \end{document}

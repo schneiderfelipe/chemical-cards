@@ -1,21 +1,23 @@
 #!/usr/bin/python3
 
 import re
-import sys
+import argparse
 import subprocess
 
 from mendeleev import element
 
 
-def create_card(atomno, template, size="poker"):
+def create_card(atomno, template, size="bridge"):
     el = element(atomno)
     mass = str(el.mass)
     atomic_number = str(el.atomic_number)
 
-    econf = re.sub(r"(\d) ", r"^{\g<1>} ", el.econf)
-    econf = re.sub(r"(\d)$", r"^{\g<1>}", econf)
+    econf = re.sub(r"(\d+) ", r"^{\g<1>} ", el.econf)
+    econf = re.sub(r"(\d+)$", r"^{\g<1>}", econf)
 
     footer_items = [mass, el.name]
+    # header_items = [el.abundance_crust, "\ce{" + econf + "}"]
+    # header_items = [el.block, "\ce{" + econf + "}"]
     header_items = ["\ce{" + econf + "}"]
 
     footer = "\n\n".join(map(str, footer_items))
@@ -29,28 +31,38 @@ def create_card(atomno, template, size="poker"):
                .replace("$HEADER", header)
                .replace("$FOOTER", footer))
 
-    texcode = texcode.replace("$HEIGHT", "3.5in")
-    texcode = texcode.replace("$WIDTH", "2.5in")
+    # Other sizes: http://copag.com.br/servicos/cartas-personalizadas/
     if size == "poker":
-        texcode = texcode.replace("$WIDTH", "2.5in")
-    elif size == "bridge":
-        texcode = texcode.replace("$WIDTH", "2.25in")
+        height, width = "3.5in", "2.5in"
+    else:
+        # defaults to "bridge"
+        height, width = "3.5in", "2.25in"
+    texcode = texcode.replace("$HEIGHT", height)
+    texcode = texcode.replace("$WIDTH", width)
 
-    path = "{}_{}.tex".format(atomic_number, mass)
+    path = "{}_{}_{}.tex".format(el.symbol, atomic_number, mass)
     with open(path, "w") as stream:
         stream.write(texcode)
     subprocess.run(["latexmk", "-f", "-pdf", path])
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("element")
+    parser.add_argument("--size", default="bridge", choices=["bridge", "poker"])
+    args = parser.parse_args()
+
     with open("template.tex") as stream:
         template = stream.read()
 
-        if len(sys.argv) < 1 or sys.argv[1] == "all":
+        if args.element == "all":
             for atomno in range(1, 119):
-                create_card(atomno, template)
+                create_card(atomno, template, size=args.size)
         else:
-            create_card(int(sys.argv[1]), template)
+            try:
+                create_card(int(args.element), template, size=args.size)
+            except ValueError:
+                create_card(args.element, template, size=args.size)
 
 
 if __name__ == "__main__":
